@@ -1,2 +1,2 @@
 # ExperienceMod
-Terraria Mod that enable items to gain experience
+Terraria Mod that enables items to gain experience
