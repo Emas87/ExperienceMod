@@ -1,1 +1,1 @@
-Experience for weapons-armor is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+Experience for weapons-armor is a pretty cool mod, it does for every npc you kill you adquired experience, every level increases your weapon damage. in teh future will implement armor experiecne as well.
