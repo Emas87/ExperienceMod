@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using Terraria.Utilities;
 using rail;
+using System.Collections.ObjectModel;
+using log4net.Core;
 
 namespace Experience.Items
 {
@@ -15,6 +17,8 @@ namespace Experience.Items
         public override bool InstancePerEntity => true;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            Main.player[Main.myPlayer].TryGetModPlayer(out MyPlayer playerInstance);
+            playerInstance.UpdateWeapon(item);
             if (experience != null)
             {//experience may be null if spawned from other mods which don't call OnCreate
 
@@ -30,7 +34,7 @@ namespace Experience.Items
                         if (changes.Contains("dmg"))
                         {
                             int damagePercentage = (int)Math.Round((dmg - 1f) * 100);
-                            tooltip.Text = "+" + damagePercentage.ToString() + "% damage";
+                            tooltip.Text = damagePercentage < 0? damagePercentage.ToString() + "% damage": "+" + damagePercentage.ToString() + "% damage";
                         } else {
                             tooltips.Remove(tooltip);
                         }
@@ -40,6 +44,20 @@ namespace Experience.Items
             }
         }
 
+
+        public override bool OnPickup(Item item, Player player)
+        {
+            player.TryGetModPlayer(out MyPlayer playerInstance);
+            playerInstance.UpdateWeapon(item);
+
+            return true;
+        }
+
+        public override void PostReforge(Item item)
+        {
+            Main.player[Main.myPlayer].TryGetModPlayer(out MyPlayer playerInstance);
+            playerInstance.UpdateWeapon(item);
+        }
         public bool TryGetPrefixStatMultipliersForItem(Item item, out float dmg, out float kb, out float spd, out float size, out float shtspd, out float mcst, out int crt, out string changes)
         {
             int rolledPrefix = item.prefix;
