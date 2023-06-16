@@ -18,7 +18,7 @@ namespace Experience
         public Dictionary<int, int[]> expInfo = new();
         public bool updateWeaponExp = true;
         public bool updateArmorExp = true;
-        public int[] expByLevel = { 100, 300, 1000, 3000, 5000, 6000, 7000, 8000, 9000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 1000000 };
+        public int[] expByLevel = { 100, 300, 1000, 3000, 5000, 6000, 7000, 8000, 9000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 1000000, 2000000, 3000000, 4000000, 5000000, 6000000, 7000000, 8000000, 9000000, 10000000};
         public int[] expDefByLevel = { 1000, 3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000, 30000, 33000, 36000, 39000, 42000, 45000, 48000, 51000, 54000, 57000, 60000, 630000 };
 
         public void UpdateExpInfo(Item item, int amount, int origValue, bool isWeapon = true)
@@ -73,10 +73,9 @@ namespace Experience
                     item = this.Player.HeldItem;
                 }
                 // Get item.type from projectile
-                UpdateExpInfo(item, target.lifeMax, item.OriginalDamage);              
-                item = null;
+                UpdateExpInfo(item, target.lifeMax, item.OriginalDamage);
             }
-            
+
         }
         public override void SaveData(TagCompound tag)
         {
@@ -120,6 +119,7 @@ namespace Experience
 
         public void UpdateWeapon(Item item)
         {
+            //TODO item damage is not modified by armor bonuses or accesories modifier
             if (item.type == ItemID.None || item.ammo != 0 || item.damage <= 0 || item.accessory)
                 return;
 
@@ -150,20 +150,36 @@ namespace Experience
                 }
                 else if (i < 20)
                 {
-                    item.damage += 2;
+                    if(item.DamageType.DisplayName == "summon damage")
+                    {
+                        item.damage += 1;
+                    } else
+                    {
+                        item.damage += 2;
+                    }
                 }
                 else
                 {
-                    item.damage += i - 18;                        
+                    if (item.DamageType.DisplayName == "summon damage")
+                    {
+                        item.damage += 2;
+                    }
+                    else
+                    {
+                        item.damage += i - 18;                        
+                    }
                 }
             }
+            if(newLevel >= expByLevel.Length)
+            {
+                newLevel = expByLevel.Length-1;
+                expInfo[item.type][3] = 0;
+                expInfo[item.type][0] = expByLevel[expByLevel.Length - 1];
+            } else
+            {
+                expInfo[item.type][3] = expByLevel[newLevel] - expInfo[item.type][0];
+            }
             expInfo[item.type][1] = newLevel;
-            expInfo[item.type][3] = expByLevel[newLevel] - expInfo[item.type][0];
-
-            //Update shop value of the item
-            this.Player.GetItemExpectedPrice(item, out int calcForSelling, out int calcForBuying);
-            item.shopCustomPrice = calcForSelling + 50 * newLevel;
-
             
             //Update Tooltip
             item.TryGetGlobalItem(out ExpGlobalItem itemInstance);
@@ -213,8 +229,17 @@ namespace Experience
                     expInfo[item.type][2] += 1;
                     item.defense = expInfo[item.type][2];
                 }
+                if (newLevel >= expDefByLevel.Length)
+                {
+                    newLevel = expDefByLevel.Length - 1;
+                    expInfo[item.type][3] = 0;
+                    expInfo[item.type][0] = expByLevel[expByLevel.Length - 1];
+                }
+                else
+                {
+                    expInfo[item.type][3] = expDefByLevel[newLevel] - expInfo[item.type][0];
+                }
                 expInfo[item.type][1] = newLevel;
-                expInfo[item.type][3] = expDefByLevel[newLevel] - expInfo[item.type][0];
 
                 //Update shop value of the item
                 this.Player.GetItemExpectedPrice(item, out int calcForSelling, out int _);

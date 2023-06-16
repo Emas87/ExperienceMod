@@ -27,8 +27,12 @@ namespace Experience.Items
 
                 // Fix damage percentage by Prefix
                 foreach (var tooltip in tooltips)
-                {            
-                    if (tooltip.Name == "PrefixDamage")
+                {
+                    if (item.DamageType.DisplayName == "summon damage" && tooltip.Name == "Damage")
+                    {
+                        tooltip.Text = item.damage.ToString() + " " + item.DamageType.DisplayName;
+                    }
+                        if (tooltip.Name == "PrefixDamage")
                     {
                         TryGetPrefixStatMultipliersForItem(item, out float dmg, out float kb, out float spd, out float size, out float shtspd, out float mcst, out int crt, out string changes);
                         if (changes.Contains("dmg"))
@@ -43,7 +47,6 @@ namespace Experience.Items
                 }
             }
         }
-
 
         public override bool OnPickup(Item item, Player player)
         {

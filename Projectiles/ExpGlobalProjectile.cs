@@ -35,52 +35,7 @@ namespace Experience.Projectiles
             }
             //parentType = source['Item'].type;
         }
-		/*	// If the projectile was shot by Torch God, and is aimed at a player - triple the amount by shooting 2 slower and spread ones.
-			if (source is EntitySource_TorchGod { TargetedEntity: Player } && projectile.type == ProjectileID.TorchGod) {
-				var newSource = projectile.GetSource_FromThis(); // Use a separate source for the newly created projectiles, to not cause a stack overflow.
-				
-				for (int i = -1; i < 2; i += 2) {
-					var velocity = projectile.velocity.RotatedBy(MathHelper.ToRadians(15f * i)) * 0.5f;
-
-					Projectile.NewProjectile(newSource, projectile.position, velocity, projectile.type, projectile.damage, projectile.knockBack, projectile.owner);
-				}
-			}
-
-			// For every projectile created in falling stars' context.
-			if (source is EntitySource_Misc { Context: "FallingStar" }) {
-				float closestPlayerSqrDistance = -1f;
-				Player closestPlayer = null;
-
-				for (int i = 0; i < Main.maxPlayers; i++) {
-					var player = Main.player[i];
-
-					if (player?.active != true || player.DeadOrGhost) {
-						continue;
-					}
-
-					// Squared distance is satisfactory here, so we use it since it's way quicker to get.
-					float sqrDistance = player.Center.LengthSquared();
-
-					if (closestPlayer == null || sqrDistance < closestPlayerSqrDistance) {
-						closestPlayer = player;
-						closestPlayerSqrDistance = sqrDistance;
-					}
-				}
-
-				// If the closest player is found
-				if (closestPlayer != null) {
-					// Aim the falling star towards the closest player -- don't worry, they don't seem to deal damage to players.
-					var directionTowardsPlayer = (closestPlayer.Center - projectile.Center).SafeNormalize(default);
-
-					if (directionTowardsPlayer != default) {
-						projectile.velocity = directionTowardsPlayer * (projectile.velocity.Length() + 10f); // With a 'small' boost.
-
-						//NOTE: OnSpawn is called before the projectile is synchronized, so in this case we don't have to sync the velocity for multiplayer.
-					}
-				}
-			}
-		}*/
-        public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit)
+		public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit)
         {
 			int delete = 0;
         }
